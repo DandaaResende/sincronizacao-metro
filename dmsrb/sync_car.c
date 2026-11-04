@@ -43,3 +43,19 @@ void station_wait_for_car(struct station *station)
 
     pthread_mutex_unlock(&station->lock);
 }
+
+void station_on_board(struct station *station)
+{
+    pthread_mutex_lock(&station->lock);
+
+    // Registra a confirmação do embarque.
+    station->passageiros_embarcados++;
+
+    // Informa que um passageiro terminou de embarcar.
+    station->passageiros_autorizados--;
+
+    // Avisa o carro que houve uma confirmação.
+    pthread_cond_signal(&station->embarque);
+
+    pthread_mutex_unlock(&station->lock);
+}
