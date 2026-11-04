@@ -7,6 +7,7 @@ void station_init(struct station *station)
     pthread_cond_init(&station->passageiros, NULL);
     pthread_cond_init(&station->embarque, NULL);
 
+    station->carro_presente = 0;
     station->assentos_disponiveis = 0;
     station->passageiros_esperando = 0;
     station->passageiros_autorizados = 0;
@@ -21,7 +22,7 @@ void station_wait_for_car(struct station *station)
     station->passageiros_esperando++;
 
     // Aguarda enquanto não houver assentos disponíveis.
-    while (station->assentos_disponiveis == 0) {
+    while (!station->carro_presente || station->assentos_disponiveis == 0) {
         pthread_cond_wait(&station->passageiros, &station->lock);
     }
 
@@ -54,6 +55,7 @@ void station_load_car(struct station *station, int count)
     pthread_mutex_lock(&station->lock);
 
     // Registra a chegada do carro e seus assentos disponíveis.
+    station->carro_presente = 1;
     station->assentos_disponiveis = count;
     station->passageiros_embarcados = 0;
 
@@ -69,6 +71,10 @@ void station_load_car(struct station *station, int count)
 
         pthread_cond_wait(&station->embarque, &station->lock);
     }
+
+    // Registra a partida do carro.
+    station->carro_presente = 0;
+    station->assentos_disponiveis = 0;
 
     pthread_mutex_unlock(&station->lock);
 }

@@ -9,6 +9,7 @@ struct station {
     pthread_cond_t passageiros;
     pthread_cond_t embarque;
 
+    int carro_presente;
     int assentos_disponiveis;
     int passageiros_esperando;
     int passageiros_autorizados;
