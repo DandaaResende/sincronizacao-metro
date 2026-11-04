@@ -1,16 +1,4 @@
-#include <pthread.h>
-
-struct station {
-    pthread_mutex_t lock;
-
-    pthread_cond_t passageiros;
-    pthread_cond_t embarque;
-
-    int assentos_disponiveis;
-    int passageiros_esperando;
-    int passageiros_autorizados;
-    int passageiros_embarcados;
-};
+#include "sync_car.h"
 
 void station_init(struct station *station)
 {
